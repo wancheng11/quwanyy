@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>支付</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .back-btn {
+            color: #333;
+            margin-right: 15px;
+        }
+
+        .content {
+            margin-top: 60px;
+            padding: 15px;
+        }
+
+        .order-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .order-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .seller-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            overflow: hidden;
+        }
+
+        .seller-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .order-info {
+            flex: 1;
+        }
+
+        .seller-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .order-type {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .price-section {
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .price-row {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+
+        .price-label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .price-value {
+            font-size: 15px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .total-price {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .total-label {
+            font-size: 14px;
+            color: #666;
+            margin-right: 10px;
+        }
+
+        .total-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: #FF6B6B;
+        }
+
+        .payment-methods {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-radius: 12px;
+            background: #f8f8f8;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-option.selected {
+            background: #FFF0F0;
+            border: 1px solid #FF6B6B;
+        }
+
+        .payment-icon {
+            width: 30px;
+            height: 30px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .payment-icon .material-icons {
+            font-size: 24px;
+            color: #666;
+        }
+
+        .payment-name {
+            flex: 1;
+            font-size: 15px;
+        }
+
+        .payment-radio {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .payment-option.selected .payment-radio {
+            border-color: #FF6B6B;
+        }
+
+        .payment-option.selected .payment-radio::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #FF6B6B;
+        }
+
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            padding: 15px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .pay-price {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .price-amount {
+            font-size: 20px;
+            font-weight: 600;
+            color: #FF6B6B;
+        }
+
+        .pay-button {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .pay-button:active {
+            transform: scale(0.98);
+        }
+
+        .success-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-content {
+            background: #fff;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            animation: slideUp 0.3s ease;
+        }
+
+        .success-icon {
+            color: #4CAF50;
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .success-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .success-message {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .time-selector {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .time-btn {
+            padding: 6px 15px;
+            border-radius: 20px;
+            border: 1px solid #e8e8e8;
+            background: #fff;
+            color: #666;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .time-btn.selected {
+            background: #FF6B6B;
+            color: white;
+            border-color: #FF6B6B;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <i class="material-icons back-btn" onclick="history.back()">arrow_back</i>
+        <span>确认支付</span>
+    </div>
+
+    <div class="content">
+        <div class="order-card">
+            <div class="order-info" style="padding-bottom: 15px; margin-bottom: 15px; border-bottom: 1px solid #f0f0f0;">
+                <div class="info-row" style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="color: #666;">订单号</span>
+                    <span id="orderId" style="color: #333;"></span>
+                </div>
+                <div class="info-row" style="display: flex; justify-content: space-between;">
+                    <span style="color: #666;">预定时间</span>
+                    <span id="orderTime" style="color: #333;"></span>
+                </div>
+            </div>
+            <div class="order-header">
+                <div class="seller-avatar">
+                    <img src="https://s1.imagehub.cc/images/2024/11/08/517863d36cc7513386d28d457636008d.jpeg" alt="陪玩头像">
+                </div>
+                <div class="order-info">
+                    <div class="seller-name">小甜甜</div>
+                    <div class="order-type">游戏陪玩 - 王者荣耀</div>
+                </div>
+            </div>
+            <div class="price-section">
+                <div class="price-row">
+                    <span class="price-label">陪玩时长</span>
+                    <div class="time-selector">
+                        <button class="time-btn" data-hours="1">1小时</button>
+                        <button class="time-btn" data-hours="2">2小时</button>
+                        <button class="time-btn" data-hours="3">3小时</button>
+                        <button class="time-btn" data-hours="4">4小时</button>
+                    </div>
+                </div>
+                <div class="price-row">
+                    <span class="price-label">单价</span>
+                    <span class="price-value">￥30.00/小时</span>
+                </div>
+            </div>
+            <div class="total-price">
+                <span class="total-label">总计</span>
+                <span class="total-value">￥30.00</span>
+            </div>
+        </div>
+
+        <div class="payment-methods">
+            <div class="section-title">选择支付方式</div>
+            <div class="payment-option selected" onclick="selectPayment(this)">
+                <div class="payment-icon">
+                    <i class="material-icons" style="color: #1AAD19;">account_balance_wallet</i>
+                </div>
+                <div class="payment-name">微信支付</div>
+                <div class="payment-radio"></div>
+            </div>
+            <div class="payment-option" onclick="selectPayment(this)">
+                <div class="payment-icon">
+                    <i class="material-icons" style="color: #1677FF;">credit_card</i>
+                </div>
+                <div class="payment-name">支付宝</div>
+                <div class="payment-radio"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-bar">
+        <div class="pay-price">
+            支付金额: <span class="price-amount">￥30.00</span>
+        </div>
+        <button class="pay-button" onclick="handlePayment()">立即支付</button>
+    </div>
+
+    <div class="success-modal" id="successModal">
+        <div class="success-content">
+            <i class="material-icons success-icon">check_circle</i>
+            <div class="success-title">支付成功</div>
+            <div class="success-message">订单已完成，即将跳转...</div>
+        </div>
+    </div>
+
+    <script>
+        function selectPayment(element) {
+            // 移除其他选项的选中状态
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            // 添加当前选项的选中状态
+            element.classList.add('selected');
+        }
+
+        function handlePayment() {
+            const successModal = document.getElementById('successModal');
+            successModal.style.display = 'flex';
+            
+            // 3秒后跳转到订单详情页
+            setTimeout(() => {
+                window.location.href = 'order-detail.html';
+            }, 3000);
+        }
+
+        // 添加滑动返回功能
+        let startX = 0;
+        let startY = 0;
+        const threshold = 50;
+
+        document.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (startX < 50) {
+                const deltaX = e.touches[0].clientX - startX;
+                const deltaY = Math.abs(e.touches[0].clientY - startY);
+                
+                if (deltaX > deltaY && deltaX > 0) {
+                    e.preventDefault();
+                }
+            }
+        }, { passive: false });
+
+        document.addEventListener('touchend', (e) => {
+            if (startX < 50) {
+                const deltaX = e.changedTouches[0].clientX - startX;
+                const deltaY = Math.abs(e.changedTouches[0].clientY - startY);
+                
+                if (deltaX > threshold && deltaX > deltaY) {
+                    history.back();
+                }
+            }
+        });
+
+        // 添加时长选择和价格计算功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const timeButtons = document.querySelectorAll('.time-btn');
+            const totalValue = document.querySelector('.total-value');
+            const priceAmount = document.querySelector('.price-amount');
+            const basePrice = 30; // 每小时基础价格
+            let selectedHours = 1; // 默认1小时
+
+            // 默认选中第一个时长按钮
+            timeButtons[0].classList.add('selected');
+
+            timeButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 移除其他按钮的选中状态
+                    timeButtons.forEach(b => b.classList.remove('selected'));
+                    // 添加当前按钮的选中状态
+                    this.classList.add('selected');
+                    
+                    // 获取选择的小时数
+                    selectedHours = parseInt(this.dataset.hours);
+                    
+                    // 计算总价
+                    const totalPrice = basePrice * selectedHours;
+                    
+                    // 更新显示
+                    totalValue.textContent = `￥${totalPrice.toFixed(2)}`;
+                    priceAmount.textContent = `￥${totalPrice.toFixed(2)}`;
+                });
+            });
+        });
+
+        // 在页面加载时获取支付信息
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取商品信息
+            const productInfo = JSON.parse(localStorage.getItem('currentProduct'));
+            if (productInfo) {
+                // 更新页面内容
+                document.querySelector('.seller-name').textContent = productInfo.name;
+                document.querySelector('.seller-avatar img').src = productInfo.avatar;
+                document.querySelector('.order-type').textContent = `游戏陪玩 - ${productInfo.gameType}`;
+                document.querySelector('.price-value').textContent = productInfo.price;
+                
+                // 更新总价和支付金额
+                const price = parseFloat(productInfo.price.replace('￥', ''));
+                document.querySelector('.total-value').textContent = `￥${price.toFixed(2)}`;
+                document.querySelector('.price-amount').textContent = `￥${price.toFixed(2)}`;
+
+                // 生成订单号和流水号
+                const orderId = 'QW' + Date.now().toString().slice(-8) + Math.random().toString(36).slice(-4).toUpperCase();
+                const transactionId = Date.now().toString().slice(0, 11); // 生成11位数字的流水号
+                
+                document.getElementById('orderId').textContent = orderId;
+                document.getElementById('transactionId').textContent = transactionId;
+                
+                // 生成预定时间（当前时间）
+                const now = new Date();
+                const orderTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                document.getElementById('orderTime').textContent = orderTime;
+
+                // 存储订单信息
+                const orderInfo = {
+                    orderId: orderId,
+                    transactionId: transactionId,
+                    orderTime: orderTime,
+                    duration: '1小时', // 默认时长
+                    amount: price,
+                    sellerName: productInfo.name,
+                    sellerAvatar: productInfo.avatar,
+                    gameType: productInfo.gameType
+                };
+                localStorage.setItem('currentOrder', JSON.stringify(orderInfo));
+            }
+        });
+    </script>
+</body>
+</html> 
